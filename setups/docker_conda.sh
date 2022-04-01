@@ -47,7 +47,12 @@ echo "Setup .bashrc..."
 echo '' >> ~/.bashrc
 echo 'export PATH=${HOME}/bin:${PATH}' >> ~/.bashrc
 
+cd
+sudo chmod +x bin/docker-compose
 echo "docker-compose version..."
 docker-compose --version
 
 mkdir -p ~/.google/credentials
+
+
+pip install confluent-kafka
