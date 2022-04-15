@@ -1,0 +1,9 @@
+version: 2
+
+sources:
+    - name: staging
+      database:  zoomcamp-de-339322
+      schema: stg
+      tables:
+        - name: raw_data
+        - name: states
