@@ -32,19 +32,26 @@ You will need to give extra permissions for VM instances, dataproc and firewall 
 Open terminal and type the following commands:
 
 ``` git clone https://github.com/sadiayousafzai036/FinalProject.git```
+
 ``` cd FinalProject/setups```
+
 ``` bash terraform.sh```
 
 This will install terraform dependencies necessary for GCP on your system. Now to deploy the infrastructure, execute the below commands:
+
 ``cd FinalProject/terraform/```
+
 ```terraform init```
+
 ```terraform plan```
+
 ```terraform apply```
 
 If everything goes well, you will see instances for two empty datasets in BigQuery, airflow, spark cluster and kafka in your VM instances page on GCP.
 Note down their external ips and add them in your config file.
 
 Possible error: If you get errors like unauthorized permission to create resources on GCP, please check the path for google_credentials.json file in the below command:
+
 ```export GOOGLE_APPLICATION_CREDENTIALS="<path>/google_credentials.json" ```
 
 ## Kafka Setup:
@@ -54,15 +61,19 @@ Open gitbash and execute this for creating sessions : ```ssh kafka-instance```
 # Kafka First Session:
 
 Execute the below command to clone the repo:
+
 ``` git clone https://github.com/sadiayousafzai036/FinalProject.git```
+
 ``` bash FinalProject/setups/docker_conda.sh ```
 
 Close the session and open it again:
 
 ``` cd FinalProject/kafka```
+
 ``` export KAFKA_ADDRESS=<external ip address of kafka-instance vm>```
 
 Execute the below command to start kafka instance:
+
 ```docker-compose up```
 
 # Kafka Second Session:
@@ -70,12 +81,15 @@ Execute the below command to start kafka instance:
 Execute the below command to clone the repo:
 
 ``` git clone https://github.com/sadiayousafzai036/FinalProject.git```
+
 ``` bash FinalProject/setups/docker_conda.sh ```
 
 Close the session and open it again:
 
 ``` cd FinalProject/kafka```
+
 ``` export KAFKA_ADDRESS=<external ip address of kafka-instance vm>```
+
 ``` python3 generate_dataset_to_kafka.py```
 
 Second session will generate streaming data for session 1 kafka instance to produce it on kafka broker in partitions using topic 'raw_data`.
@@ -89,14 +103,17 @@ execute ```ssh multinode-spark-cluster-m```
 Execute the below command to clone the repo and install spark dependencies:
 
 ``` git clone https://github.com/sadiayousafzai036/FinalProject.git```
+
 ``` bash FinalProject/setups/spark.sh ```
 
 Configure environment variables:
 
 ```export KAFKA_ADDRESS=<external ip address of kafka-instance>```
+
 ```export GCP_GCS_BUCKET=<bucket name used in creating data (remember terraform apply?)>```
 
 To consume data from kafka broker using spark streaming, execute:
 
 ``` cd FinalProject/spark_streaming/```
+
 ``` spark-submit --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.1.2 stream_data.py ```
