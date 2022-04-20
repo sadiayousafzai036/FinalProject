@@ -36,7 +36,5 @@ listen_events_writer = create_file_write_stream(listen_events,
 
 
 listen_events_writer.start()
-auth_events_writer.start()
-page_view_events_writer.start()
 
 spark.streams.awaitAnyTermination()
