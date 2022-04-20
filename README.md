@@ -16,10 +16,10 @@ Dataset used in this project is web activity on a website. All of the data is fa
 - Spark Streaming
 
 ## Architecture:
-
+![Screenshot](456.png)
 
 ## Dashboard:
-
+![Screenshot](123.png)
 
 ## Steps to Execute the Project:
 First, you should have a working GCP account and Terraform module in your local computer. Setup is given in datatalk github page:
@@ -112,8 +112,34 @@ Configure environment variables:
 
 ```export GCP_GCS_BUCKET=<bucket name used in creating data (remember terraform apply?)>```
 
+```export GOOGLE_APPLICATION_CREDENTIALS="<path>/google_credentials.json" ```
+
 To consume data from kafka broker using spark streaming, execute:
 
 ``` cd FinalProject/spark_streaming/```
 
 ``` spark-submit --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.1.2 stream_data.py ```
+
+If there are no errors along the way, you will see files in Google Cloud Storage Data Lake!
+
+## Airflow and dbt:
+
+You will need to use the session dedicated for airflow-intance.
+
+execute ```ssh airflow-instance```
+
+Execute the below command to clone the repo and install spark dependencies:
+
+``` git clone https://github.com/sadiayousafzai036/FinalProject.git```
+
+``` bash FinalProject/setups/docker_conda.sh ```
+
+``` bash FinalProject/setups/airflow.sh ```
+
+Forward the port 8080 to your local machine and open localhost:8080 in your browser. Trigger the "transform" dag which will execute hourly.
+
+## Dashboard
+
+Click on this link to see the dashboard
+
+https://datastudio.google.com/s/gAcUZv1rI_o
