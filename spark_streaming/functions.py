@@ -1,11 +1,12 @@
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import from_json, col, month, hour, dayofmonth, col, year, udf
-
+from pyspark.sql import functions as F
+from pyspark.sql.functions import split, explode
 
 @udf
 def string_decode(s, encoding='utf-8'):
     if s:
-        return (s.encode('latin1')         # To bytes, required by 'unicode-escape'
+        return (repr(s).encode('latin1')         # To bytes, required by 'unicode-escape'
                 .decode('unicode-escape') # Perform the actual octal-escaping decode
                 .encode('latin1')         # 1:1 mapping back to bytes
                 .decode(encoding)         # Decode original encoding
@@ -80,29 +81,22 @@ def process_stream(stream, stream_schema, topic):
     # inside to the passed schema
     stream = (stream
               .selectExpr("CAST(value AS STRING)")
-              .select(
-                  from_json(col("value"), stream_schema).alias(
+              .select(from_json(col("value"), stream_schema).alias(
                       "data")
               )
-              .select("data.*")
-              )
+              .select(col("data.visit_id"),col("data.event_time"),col("data.user_id"),col("data.page.previous").alias("page_previous"),col("data.page.current").alias("page_current"),col("data.source.site").alias("source_site"),col("data.source.api_version").alias("source_api_version"),col("data.user.latitude").alias("user_latitude"),col("data.user.longitude").alias("user_longitude")  ,col("data.technical.browser").alias("technical_browser"),col("data.technical.os").alias("technical_os"),col("data.technical.lang").alias("technical_lang"),col("data.technical.device.type").alias("device_type"),col("data.technical.device.version").alias("device_version"),col("data.technical.network").alias("technical_network"),col("data.keep_private").alias("keep_private"))
+            # .select(col("data.visit_id"),col("data.event_time"),col("data.user_id"),col("data.page.previous").alias("page_previous"),col("data.page.current").alias("page_current"))
+           #   .select(col("visit_id"),col("event_time"),col("user_id"), col("page.previous").alias("page_previous"), col("page.current").alias("page_current"), col("source.site").alias("source_site"), col("source.api_version").alias("api_version"))    
+              )       
 
     # Add month, day, hour to split the data into separate directories
     stream = (stream
-              .withColumn("event_time", (col("event_time")/1000).cast("timestamp"))
               .withColumn("year", year(col("event_time")))
               .withColumn("month", month(col("event_time")))
               .withColumn("hour", hour(col("event_time")))
               .withColumn("day", dayofmonth(col("event_time")))
               )
 
-    # rectify string encoding
-    if topic in ["raw_data"]:
-        stream = (stream
-                .withColumn("user_id", string_decode("user_id"))
-                .withColumn("visit_id", string_decode("visit_id")) 
-                .withColumn("keep_private", string_decode("keep_private")) 
-                )
 
 
     return stream
