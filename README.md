@@ -147,5 +147,4 @@ Forward the port 8080 to your local machine and open localhost:8080 in your brow
 ## Dashboard
 
 Click on this link to see the dashboard
-
-https://datastudio.google.com/s/gAcUZv1rI_o
+https://datastudio.google.com/reporting/923207af-b356-4586-a349-e3a050303b38
